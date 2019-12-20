@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); // installed this
-const validateRegistration = require("./register-middleware");
+const validateRegistration = require("../middleware/register-middleware");
 const Users = require("../users/users-model");
 const signToken = require("../helpers/signToken");
 
