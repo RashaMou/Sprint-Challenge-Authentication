@@ -1,4 +1,4 @@
-const Auth = require("./auth-model");
+const Auth = require("../users/users-model");
 
 module.exports = (req, res, next) => {
   const { username, password } = req.body;
