@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); // installed this
 const validateRegistration = require("./register-middleware");
 const Users = require("../users/users-model");
+const signToken = require("../helpers/signToken");
 
 router.get("/users", async (req, res) => {
   let allUsers = await Users.find();
@@ -24,7 +25,6 @@ router.post("/register", validateRegistration, (req, res) => {
 
   Users.add(user)
     .then(saved => {
-      console.log("saved", saved);
       res.status(201).json(saved);
     })
     .catch(error => {
@@ -33,7 +33,23 @@ router.post("/register", validateRegistration, (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  // implement login
+  let { username, password } = req.body;
+  Users.findBy({ username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(password, user.password)) {
+        const token = signToken(user);
+        res.status(200).json({
+          token,
+          message: `Welcome ${user.username}!`
+        });
+      } else {
+        res.status(401).json({ message: "Invalid Credentials" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json("error");
+    });
 });
 
 module.exports = router;
